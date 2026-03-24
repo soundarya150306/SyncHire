@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Search, Filter, Users, ChevronDown, CheckCircle, 
-    XCircle, Clock, FileText, Download, ExternalLink, Calendar 
+    XCircle, Clock, FileText, Download, ExternalLink, Calendar, Settings 
 } from 'lucide-react';
 
 const Candidates = () => {
@@ -15,25 +15,31 @@ const Candidates = () => {
     // Retrieve global settings from localStorage to use in the view
     const aiThreshold = parseInt(localStorage.getItem('ai_threshold') || '60', 10);
 
+    const [jobs, setJobs] = useState([]);
+
     useEffect(() => {
-        fetchCandidates();
+        fetchData();
     }, []);
 
-    const fetchCandidates = async () => {
+    const fetchData = async () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:8000/candidates/', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setCandidates(data);
+            const [candRes, jobsRes] = await Promise.all([
+                fetch('http://localhost:8000/candidates/', { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch('http://localhost:8000/jobs/', { headers: { 'Authorization': `Bearer ${token}` } })
+            ]);
+            if (candRes.ok && jobsRes.ok) {
+                const cData = await candRes.json();
+                const jData = await jobsRes.json();
+                setCandidates(cData);
+                setJobs(jData);
+            } else if (candRes.ok) {
+                const cData = await candRes.json();
+                setCandidates(cData);
             }
         } catch (error) {
-            console.error('Failed to fetch candidates', error);
+            console.error('Failed to fetch data', error);
         } finally {
             setLoading(false);
         }
@@ -58,6 +64,29 @@ const Candidates = () => {
             }
         } catch (error) {
             console.error('Failed to update status', error);
+        }
+    };
+
+    const handleScheduleSlot = async (candidateId, dateStr) => {
+        try {
+            const token = localStorage.getItem('token');
+            const isoDate = new Date(dateStr).toISOString();
+            const res = await fetch(`http://localhost:8000/candidates/${candidateId}/interview_slot`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ interview_slot: isoDate })
+            });
+
+            if (res.ok) {
+                setCandidates(prev => 
+                    prev.map(c => c.id === candidateId ? { ...c, interview_slot: isoDate, status: 'Interview' } : c)
+                );
+            }
+        } catch (error) {
+            console.error('Failed to update slot', error);
         }
     };
 
@@ -343,9 +372,23 @@ const Candidates = () => {
                                                                             <span className="text-gray-200">{candidate.phone || 'N/A'}</span>
                                                                         </div>
                                                                         <div className="flex justify-between text-sm py-2 border-b border-white/5">
-                                                                            <span className="text-gray-500">Applied For Job ID</span>
-                                                                            <span className="text-gray-200">#{candidate.job_id}</span>
+                                                                            <span className="text-gray-500">Applied For Job</span>
+                                                                            <span className="text-gray-200">{jobs?.find(j => j.id === candidate.job_id)?.title || `Job #${candidate.job_id}`}</span>
                                                                         </div>
+                                                                        
+                                                                        {candidate.status === 'Interview' && (
+                                                                            <div className="flex flex-col gap-2 py-3 border-b border-white/5">
+                                                                                <span className="text-gray-500 text-xs uppercase font-bold tracking-wider">Confirm Interview Slot</span>
+                                                                                <input 
+                                                                                    type="datetime-local" 
+                                                                                    title="Schedule slot"
+                                                                                    className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500/50"
+                                                                                    onChange={(e) => {
+                                                                                        if(e.target.value) handleScheduleSlot(candidate.id, e.target.value);
+                                                                                    }}
+                                                                                />
+                                                                            </div>
+                                                                        )}
                                                                         <div className="pt-2">
                                                                             <button 
                                                                                 onClick={() => handleDownloadResume(candidate.id, candidate.first_name, candidate.last_name)}

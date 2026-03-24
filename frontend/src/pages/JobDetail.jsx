@@ -227,6 +227,14 @@ const JobDetail = () => {
                                                 {candidate.first_name} {candidate.last_name}
                                             </h3>
                                             <p className="text-sm text-gray-500 truncate">{candidate.email}</p>
+                                            {candidate.interview_slot && new Date(candidate.interview_slot) > new Date() && (
+                                                <div className="flex items-center gap-1.5 mt-1 text-[10px] font-semibold text-primary-300 bg-primary-500/10 border border-primary-500/20 px-2 py-0.5 rounded w-fit">
+                                                    <Calendar size={10} />
+                                                    {new Date(candidate.interview_slot).toLocaleString(undefined, { 
+                                                        weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'
+                                                    })}
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="z-10 flex-shrink-0">

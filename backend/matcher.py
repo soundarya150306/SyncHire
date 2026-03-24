@@ -27,7 +27,14 @@ def calculate_match_score(resume_text: str, job_text: str) -> Tuple[float, str]:
     # if it has commas, otherwise space-separated words (excluding stopwords ideally, but we'll do simple).
     
     if ',' in job_text:
-        raw_keywords = [k.strip() for k in job_text.split(',')]
+        # Avoid treating entire sentences as keywords by flattening and extracting smaller parts
+        raw_keywords = []
+        for phrase in job_text.split(','):
+            words = phrase.strip().split()
+            if len(words) <= 3:
+                raw_keywords.append(' '.join(words))
+            else:
+                raw_keywords.extend(words)
     else:
         raw_keywords = [w.strip() for w in job_text.split() if len(w) > 2]
         
