@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../api';
 import { 
     Search, Filter, Users, ChevronDown, CheckCircle, 
     XCircle, Clock, FileText, Download, ExternalLink, Calendar, Settings 
@@ -24,26 +25,19 @@ const Candidates = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const token = localStorage.getItem('token');
             
             // Fetch candidates
             try {
-                const candRes = await fetch('http://localhost:8000/candidates/', { headers: { 'Authorization': `Bearer ${token}` } });
-                if (candRes.ok) {
-                    const cData = await candRes.json();
-                    setCandidates(cData);
-                }
+                const candRes = await api.get('/candidates/');
+                setCandidates(candRes.data);
             } catch (e) {
                 console.error('Failed to fetch candidates', e);
             }
 
             // Fetch jobs
             try {
-                const jobsRes = await fetch('http://localhost:8000/jobs/', { headers: { 'Authorization': `Bearer ${token}` } });
-                if (jobsRes.ok) {
-                    const jData = await jobsRes.json();
-                    setJobs(jData);
-                }
+                const jobsRes = await api.get('/jobs/');
+                setJobs(jobsRes.data);
             } catch (e) {
                 console.error('Failed to fetch jobs', e);
             }
@@ -57,17 +51,8 @@ const Candidates = () => {
 
     const handleStatusChange = async (candidateId, newStatus) => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:8000/candidates/${candidateId}/status`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ status: newStatus })
-            });
-
-            if (res.ok) {
+            const res = await api.patch(`/candidates/${candidateId}/status`, { status: newStatus });
+            if (res.status === 200) {
                 setCandidates(prev => 
                     prev.map(c => c.id === candidateId ? { ...c, status: newStatus } : c)
                 );
@@ -79,18 +64,9 @@ const Candidates = () => {
 
     const handleScheduleSlot = async (candidateId, dateStr) => {
         try {
-            const token = localStorage.getItem('token');
             const isoDate = new Date(dateStr).toISOString();
-            const res = await fetch(`http://localhost:8000/candidates/${candidateId}/interview_slot`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ interview_slot: isoDate })
-            });
-
-            if (res.ok) {
+            const res = await api.patch(`/candidates/${candidateId}/interview_slot`, { interview_slot: isoDate });
+            if (res.status === 200) {
                 setCandidates(prev => 
                     prev.map(c => c.id === candidateId ? { ...c, interview_slot: isoDate, status: 'Interview' } : c)
                 );
