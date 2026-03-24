@@ -154,11 +154,15 @@ const Candidates = () => {
             {/* Header section with decorative glows */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10">
                 <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
-                        <Users size={16} /> Global Candidate Pool
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-secondary-500/10 rounded-xl border border-secondary-500/20 shadow-[0_0_15px_rgba(139,92,246,0.15)]">
+                            <Users className="text-secondary-400" size={28} />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-extrabold text-white tracking-tight">Interview Schedules</h1>
+                            <p className="text-gray-400 mt-1">View, filter, and manage scheduled interviews and applicants across your active job postings.</p>
+                        </div>
                     </div>
-                    <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Candidates</h1>
-                    <p className="text-gray-400 max-w-2xl">View, filter, and manage all applicants across your active job postings.</p>
                 </div>
                 
                 {/* Advanced Search & Filtering Toolbar */}
@@ -167,10 +171,10 @@ const Candidates = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         <input 
                             type="text" 
-                            placeholder="Search candidates..." 
+                            placeholder="Search candidates or interviews..." 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="bg-transparent border-none text-white placeholder-gray-500 pl-10 pr-4 py-2 w-full focus:ring-0 text-sm focus:outline-none"
+                            className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-secondary-500/50 focus:ring-1 focus:ring-secondary-500/50 transition-all font-sans"
                         />
                     </div>
                     <div className="w-px h-8 bg-white/10 hidden sm:block" />
@@ -194,16 +198,17 @@ const Candidates = () => {
             {loading ? (
                 <div className="glass-panel h-64 flex flex-col items-center justify-center space-y-4">
                     <div className="w-8 h-8 rounded-full border-2 border-primary-500 border-t-transparent animate-spin" />
-                    <p className="text-gray-400 animate-pulse">Scanning candidate pool...</p>
+                    <p className="text-gray-400 animate-pulse">Fetching interview schedules...</p>
                 </div>
             ) : filteredCandidates.length === 0 ? (
                 <div className="glass-panel py-20 flex flex-col items-center justify-center text-center">
-                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-                        <Users size={32} className="text-gray-500" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-2">No Candidates Found</h3>
-                    <p className="text-gray-400">Try adjusting your filters or search query.</p>
-                </div>
+                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10 shadow-inner">
+                                <Users className="text-gray-500 w-8 h-8" />
+                            </div>
+                            <h3 className="text-lg font-bold text-white mb-2 tracking-tight">No Interviews or Candidates Found</h3>
+                            <p className="text-gray-500 max-w-sm mx-auto text-sm">
+                                Try adjusting your filters or search query.
+                            </p></div>
             ) : (
                 <div className="glass-panel overflow-hidden border border-white/5 rounded-2xl">
                     <div className="overflow-x-auto">

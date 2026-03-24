@@ -128,7 +128,7 @@ const Layout = () => {
                             <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-8 mb-4 px-2">Management</div>
                             <SidebarItem
                                 icon={Users}
-                                label="Candidates"
+                                label="Interview Schedules"
                                 to="/candidates"
                                 active={location.pathname.startsWith('/candidates')}
                             />
