@@ -242,7 +242,7 @@ const Candidates = () => {
                                                                 <div className="text-xs text-gray-500">{candidate.email}</div>
                                                             </div>
                                                         </div>
-                                                        { candidate.interview_slot && new Date(candidate.interview_slot) > new Date() && (
+                                                        { candidate.interview_slot && (
                                                             <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-primary-300 bg-primary-500/10 border border-primary-500/20 px-2 py-1 rounded w-fit ml-14">
                                                                 <Calendar size={12} />
                                                                 {new Date(candidate.interview_slot).toLocaleString(undefined, { 
@@ -376,12 +376,26 @@ const Candidates = () => {
                                                                             <span className="text-gray-200">{jobs?.find(j => j.id === candidate.job_id)?.title || `Job #${candidate.job_id}`}</span>
                                                                         </div>
                                                                         
+                                                                        {candidate.interview_slot && (
+                                                                            <div className="flex justify-between text-sm py-2 border-b border-white/5">
+                                                                                <span className="text-gray-500">Confirmed Interview</span>
+                                                                                <span className="text-emerald-400 font-semibold">
+                                                                                    {new Date(candidate.interview_slot).toLocaleString(undefined, { 
+                                                                                        weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'
+                                                                                    })}
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                        
                                                                         {candidate.status === 'Interview' && (
                                                                             <div className="flex flex-col gap-2 py-3 border-b border-white/5">
-                                                                                <span className="text-gray-500 text-xs uppercase font-bold tracking-wider">Confirm Interview Slot</span>
+                                                                                <span className="text-gray-500 text-xs uppercase font-bold tracking-wider">
+                                                                                    {candidate.interview_slot ? 'Reschedule Interview Slot' : 'Confirm Interview Slot'}
+                                                                                </span>
                                                                                 <input 
                                                                                     type="datetime-local" 
                                                                                     title="Schedule slot"
+                                                                                    defaultValue={candidate.interview_slot ? new Date(new Date(candidate.interview_slot).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16) : ""}
                                                                                     className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500/50"
                                                                                     onChange={(e) => {
                                                                                         if(e.target.value) handleScheduleSlot(candidate.id, e.target.value);
