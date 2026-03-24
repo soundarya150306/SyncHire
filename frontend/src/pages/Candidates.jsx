@@ -25,19 +25,29 @@ const Candidates = () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const [candRes, jobsRes] = await Promise.all([
-                fetch('http://localhost:8000/candidates/', { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch('http://localhost:8000/jobs/', { headers: { 'Authorization': `Bearer ${token}` } })
-            ]);
-            if (candRes.ok && jobsRes.ok) {
-                const cData = await candRes.json();
-                const jData = await jobsRes.json();
-                setCandidates(cData);
-                setJobs(jData);
-            } else if (candRes.ok) {
-                const cData = await candRes.json();
-                setCandidates(cData);
+            
+            // Fetch candidates
+            try {
+                const candRes = await fetch('http://localhost:8000/candidates/', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (candRes.ok) {
+                    const cData = await candRes.json();
+                    setCandidates(cData);
+                }
+            } catch (e) {
+                console.error('Failed to fetch candidates', e);
             }
+
+            // Fetch jobs
+            try {
+                const jobsRes = await fetch('http://localhost:8000/jobs/', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (jobsRes.ok) {
+                    const jData = await jobsRes.json();
+                    setJobs(jData);
+                }
+            } catch (e) {
+                console.error('Failed to fetch jobs', e);
+            }
+
         } catch (error) {
             console.error('Failed to fetch data', error);
         } finally {
