@@ -100,7 +100,7 @@ const CandidateAnalysisModal = ({ candidate, onClose }) => {
                         </div>
 
                         {/* Skills Breakdown */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6">
                             {/* Matched Skills */}
                             <div className="space-y-4">
                                 <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
@@ -113,22 +113,6 @@ const CandidateAnalysisModal = ({ candidate, onClose }) => {
                                         </span>
                                     )) : (
                                         <span className="text-sm text-gray-500 italic">No significant matches found.</span>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Missing Skills */}
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                                    <AlertCircle size={14} className="text-amber-500" /> Identified Gaps
-                                </h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {analysis.missing_skills.length > 0 ? analysis.missing_skills.map(skill => (
-                                        <span key={skill} className="px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-medium capitalize">
-                                            {skill}
-                                        </span>
-                                    )) : (
-                                        <span className="text-sm text-gray-500 italic">No major gaps identified.</span>
                                     )}
                                 </div>
                             </div>

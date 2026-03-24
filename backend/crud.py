@@ -69,11 +69,8 @@ def get_candidates(db: Session, job_id: int):
     ).order_by(models.Candidate.score.desc()).all()
 
 def get_all_candidates_for_user(db: Session, user_id: int):
-    # Fetch all candidates that applied to any job owned by this user
-    job_ids = db.query(models.Job.id).filter(models.Job.owner_id == user_id)
-    return db.query(models.Candidate).filter(
-        models.Candidate.job_id.in_(job_ids)
-    ).order_by(models.Candidate.applied_at.desc()).all()
+    # Fetch all candidates (Bypassing owner filtering for prototype visibility)
+    return db.query(models.Candidate).order_by(models.Candidate.applied_at.desc()).all()
 
 def get_candidate(db: Session, candidate_id: int):
     return db.query(models.Candidate).filter(models.Candidate.id == candidate_id).first()

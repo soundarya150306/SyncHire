@@ -355,16 +355,6 @@ const Candidates = () => {
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 )}
-                                                                                                {parsed.missing_skills && parsed.missing_skills.length > 0 && (
-                                                                                                    <div className="flex-1">
-                                                                                                        <span className="text-xs text-amber-400 font-semibold block mb-1">Missing Skills</span>
-                                                                                                        <div className="flex flex-wrap gap-1">
-                                                                                                            {parsed.missing_skills.slice(0, 5).map(s => (
-                                                                                                                <span key={s} className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 text-[10px] capitalize">{s}</span>
-                                                                                                            ))}
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                )}
                                                                                             </div>
                                                                                         </div>
                                                                                     );
