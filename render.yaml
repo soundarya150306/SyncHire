@@ -1,13 +1,11 @@
 services:
-  # Frontend Static Site
   - type: web
     name: synchire-frontend
-    runtime: static  # Use runtime instead of env for static sites
+    env: static
     buildCommand: npm install && npm run build
-    publishPath: ./dist  # Fixed from staticPublishPath
+    staticPublishPath: ./dist
     rootDirectory: frontend
 
-  # Backend FastAPI Server
   - type: web
     name: synchire-backend
     env: python
