@@ -4,7 +4,10 @@ import google.generativeai as genai
 from typing import Tuple
 from dotenv import load_dotenv
 
-load_dotenv()
+# Ensure we always load from the backend folder, regardless of where uvicorn was started from
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
+load_dotenv(dotenv_path)
+
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 if GEMINI_API_KEY:
