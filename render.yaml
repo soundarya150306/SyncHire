@@ -2,16 +2,10 @@ services:
   # Frontend Static Site
   - type: web
     name: synchire-frontend
-    env: static
+    runtime: static  # Use runtime instead of env for static sites
     buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
+    publishPath: ./dist  # Fixed from staticPublishPath
     rootDirectory: frontend
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          type: web
-          name: synchire-backend
-          envVarKey: RENDER_EXTERNAL_URL
 
   # Backend FastAPI Server
   - type: web
@@ -29,10 +23,5 @@ services:
         value: sqlite:////data/cv_screening.db
       - key: UPLOAD_DIR
         value: /data/uploads
-      - key: CORS_ORIGINS
-        fromService:
-          type: web
-          name: synchire-frontend
-          envVarKey: RENDER_EXTERNAL_URL
       - key: GEMINI_API_KEY
-        sync: false # Requires manual entry in dashboard
+        sync: false
