@@ -49,7 +49,6 @@ class CandidateBase(BaseModel):
     last_name: str
     email: str
     phone: str
-    resume_path: str = ""
 
 class CandidateCreate(CandidateBase):
     job_id: int

@@ -36,7 +36,9 @@ class Candidate(Base):
     email = Column(String)
     phone = Column(String)
     resume_text = Column(Text)
-    resume_path = Column(String)
+    resume_binary = Column(LargeBinary, nullable=True)
+    resume_mimetype = Column(String, nullable=True)
+    resume_filename = Column(String, nullable=True)
     score = Column(Float, default=0.0)
     analysis_feedback = Column(Text, nullable=True)
     status = Column(String, default="Applied")  # Applied, Interview, Rejected, Hired
