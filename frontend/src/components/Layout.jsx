@@ -104,7 +104,7 @@ const Layout = () => {
                                 <Briefcase className="text-white" size={20} />
                             </div>
                             <div>
-                                <h1 className="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Nexus AI</h1>
+                                <h1 className="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">SyncHire</h1>
                                 <p className="text-xs text-primary-400 font-medium tracking-wide">RECRUITER SUITE</p>
                             </div>
                         </div>

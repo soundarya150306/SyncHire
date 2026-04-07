@@ -104,7 +104,7 @@ const CandidateAnalysisModal = ({ candidate, onClose }) => {
                             {/* Matched Skills */}
                             <div className="space-y-4">
                                 <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                                    <CheckCircle2 size={14} className="text-emerald-500" /> Key Strengths
+                                    <CheckCircle2 size={14} className="text-emerald-500" /> Matched Skills
                                 </h4>
                                 <div className="flex flex-wrap gap-2">
                                     {analysis.matched_skills.length > 0 ? analysis.matched_skills.map(skill => (
