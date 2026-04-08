@@ -21,5 +21,7 @@ services:
         value: sqlite:////data/cv_screening.db
       - key: UPLOAD_DIR
         value: /data/uploads
+      - key: CORS_ORIGINS
+        value: https://sync-hire-green.vercel.app,http://localhost:5173
       - key: GEMINI_API_KEY
         sync: false

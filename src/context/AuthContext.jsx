@@ -16,12 +16,14 @@ export const AuthProvider = ({ children }) => {
                     const { id, email, full_name, role } = response.data;
                     setUser({ token, id, email, full_name, role });
                 })
-                .catch(() => {
-                    // Token invalid, clear it
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('role');
-                    localStorage.removeItem('user_id');
-                    localStorage.removeItem('full_name');
+                .catch((error) => {
+                    // Token invalid only if unauthorized, otherwise keep it (network error, server down, etc.)
+                    if (error.response && error.response.status === 401) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('role');
+                        localStorage.removeItem('user_id');
+                        localStorage.removeItem('full_name');
+                    }
                 })
                 .finally(() => setLoading(false));
         } else {
