@@ -29,9 +29,8 @@ app.include_router(jobs.router)
 app.include_router(candidates.router)
 app.include_router(dashboard.router)
 
-@app.get("/")
-def read_root():
-    return {"message": "AI Resume Screener API is running"}
+# The root "/" is handled by the frontend index.html on Vercel.
+# Backend routes are prefixed with /api via vercel.json.
 
 @app.get("/health")
 def health_check():
