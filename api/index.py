@@ -19,11 +19,8 @@ class StripApiPrefix(BaseHTTPMiddleware):
         path = scope.get('path', '')
         if path.startswith('/api'):
             new_path = path[4:] or '/'
-            # FastAPI routes with prefixes like /candidates and @router.get("/")
-            # effectively expect /candidates/ (with the slash).
-            # We normalize here to ensure consistency.
-            if not new_path.endswith('/') and '.' not in os.path.basename(new_path):
-                new_path += '/'
+            # Do NOT force trailing slashes here. 
+            # FastAPI's router handles prefix matching and redirects automatically.
             scope['path'] = new_path
             scope['raw_path'] = new_path.encode()
         return await call_next(request)
