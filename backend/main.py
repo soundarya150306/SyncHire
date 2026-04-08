@@ -10,7 +10,10 @@ app = FastAPI(title="AI Resume Screener", version="1.0.0")
 
 import os
 
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+cors_origins = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173,https://sync-hire-green.vercel.app"
+).split(",")
 
 # CORS middleware
 app.add_middleware(
