@@ -2,7 +2,8 @@ import sys
 import os
 
 # Make the backend directory importable
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'frontend', 'backend'))
+
 
 from main import app
 from starlette.middleware.base import BaseHTTPMiddleware
