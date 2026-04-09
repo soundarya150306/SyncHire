@@ -1,7 +1,5 @@
 node_modules
 dist
-src
-public
 .git
 frontend
 test_resume.docx
@@ -10,3 +8,6 @@ test_api.py
 test_db_insert.py
 test_schema.py
 uploads
+venv
+backend/venv
+__pycache__
