@@ -21,51 +21,80 @@ def apply_for_job(
     resume: UploadFile = File(...),
     db: Session = Depends(database.get_db)
 ):
-    # Read file binary
-    file_bytes = resume.file.read()
-    file_ext = os.path.splitext(resume.filename)[1]
+    # Log the start of the process
+    print(f"DEBUG: Starting application for {email} on job {job_id}")
     
-    # Save to a temporary file just to parse it safely across OS
-    with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp:
-        tmp.write(file_bytes)
-        tmp_path = tmp.name
+    try:
+        # Read file binary
+        file_bytes = resume.file.read()
+        file_ext = os.path.splitext(resume.filename)[1].lower()
+        
+        # Save to a temporary file in /tmp (standard writable dir on Vercel)
+        # Using tempfile avoids permission issues on production systems
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext, dir="/tmp" if os.path.exists("/tmp") else None) as tmp:
+            tmp.write(file_bytes)
+            tmp_path = tmp.name
 
-    # Parse Resume Text
-    resume_text = resume_parser.parse_resume(tmp_path)
-    os.unlink(tmp_path)  # Clean up temp file immediately
+        print(f"DEBUG: Temporary file created at {tmp_path}")
 
-    # Create Candidate Record Base
-    candidate_data = schemas.CandidateCreate(
-        first_name=first_name,
-        last_name=last_name,
-        email=email,
-        phone=phone,
-        job_id=job_id
-    )
+        # Parse Resume Text
+        try:
+            resume_text = resume_parser.parse_resume(tmp_path)
+            if not resume_text:
+                print("WARNING: Resume parsing returned empty text.")
+        except Exception as parse_error:
+            print(f"ERROR: Resume parser failed: {parse_error}")
+            resume_text = "ERROR: Failed to parse resume content."
+        finally:
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+                print(f"DEBUG: Temporary file {tmp_path} unlinked.")
 
-    # Calculate Score & Feedback
-    job = db.query(models.Job).filter(models.Job.id == job_id).first()
-    if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+        # Calculate Score & Feedback
+        job = db.query(models.Job).filter(models.Job.id == job_id).first()
+        if not job:
+            raise HTTPException(status_code=404, detail="Job not found")
 
-    job_text = f"{job.description} {job.requirements}"
-    score, feedback = matcher.calculate_match_score(resume_text, job_text)
+        job_text = f"{job.description} {job.requirements}"
+        
+        print(f"DEBUG: Requesting AI match for job {job_id}...")
+        try:
+            score, feedback = matcher.calculate_match_score(resume_text, job_text)
+        except Exception as ai_error:
+            print(f"ERROR: AI Matcher failed: {ai_error}")
+            score = 0.0
+            feedback = '{"matched_skills": [], "missing_skills": [], "summary": "AI analysis failed during processing."}'
 
-    # Save to DB exactly into the DB rows
-    db_candidate = models.Candidate(
-        **candidate_data.dict(),
-        resume_text=resume_text,
-        resume_binary=file_bytes,
-        resume_mimetype=resume.content_type,
-        resume_filename=resume.filename,
-        score=score,
-        analysis_feedback=feedback
-    )
-    db.add(db_candidate)
-    db.commit()
-    db.refresh(db_candidate)
+        # Save to DB
+        db_candidate = models.Candidate(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone=phone,
+            job_id=job_id,
+            resume_text=resume_text,
+            resume_binary=file_bytes,
+            resume_mimetype=resume.content_type,
+            resume_filename=resume.filename,
+            score=score,
+            analysis_feedback=feedback
+        )
+        db.add(db_candidate)
+        db.commit()
+        db.refresh(db_candidate)
 
-    return db_candidate
+        print(f"DEBUG: Successfully saved candidate {db_candidate.id}")
+        return db_candidate
+
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print(f"CRITICAL ERROR in apply_for_job: {str(e)}")
+        # If it's a database error, we might want to be more specific
+        if "psycopg2" in str(e) or "database" in str(e).lower():
+            raise HTTPException(status_code=503, detail="Database connection issue. Please ensure environment variables are correct.")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
 
 
 @router.get("/", response_model=List[schemas.CandidateResponse])

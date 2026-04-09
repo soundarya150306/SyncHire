@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
+import database
+
 from routers import auth, jobs, candidates, dashboard
 
 # Create DB tables
@@ -12,8 +14,9 @@ import os
 
 cors_origins = os.getenv(
     "CORS_ORIGINS",
-    "http://localhost:5173,http://127.0.0.1:5173,https://sync-hire-green.vercel.app"
+    "http://localhost:5173,http://127.0.0.1:5173,https://sync-hire-green.vercel.app,https://synchire-ai-screener.vercel.app"
 ).split(",")
+
 
 # CORS middleware
 app.add_middleware(
@@ -32,6 +35,16 @@ app.include_router(dashboard.router)
 # The root "/" is handled by the frontend index.html on Vercel.
 # Backend routes are prefixed with /api via vercel.json.
 
+@app.get("/")
+def read_root():
+    return {
+        "message": "SyncHire AI Screener API is active",
+        "status": "online",
+        "database": "connected" if database.DATABASE_URL else "not configured",
+        "version": "1.0.1"
+    }
+
 @app.get("/health")
 def health_check():
-    return {"status": "ok"}
+    return {"status": "ok", "version": "1.0.1"}
+

@@ -6,15 +6,30 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Use Postgres/remote DB if provided, else strictly fallback to local SQLite
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./cv_screening.db")
+# Use Postgres/remote DB if provided, else fallback to local SQLite
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# If using PostgreSQL via SQLAlchemy, sometimes Heroku passes 'postgres://' which needs to be 'postgresql://'
-if DATABASE_URL.startswith("postgres://"):
+# Check if we are running on Vercel or locally
+IS_VERCEL = os.getenv("VERCEL") == "1"
+
+if not DATABASE_URL:
+    # Strictly for local development only
+    DATABASE_URL = "sqlite:///./cv_screening.db"
+    print("WARNING: Using SQLite. Data will not persist on Vercel.")
+
+# If using PostgreSQL via SQLAlchemy 2.0+, 'postgres://' must be 'postgresql://'
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# SQLite needs check_same_thread=False
-connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+# Configuration for different database engines
+connect_args = {}
+if DATABASE_URL and DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+elif DATABASE_URL and "postgresql" in DATABASE_URL:
+    # Ensure optimal connection settings for cloud databases
+    connect_args = {
+        "sslmode": "prefer"
+    }
 
 engine = create_engine(
     DATABASE_URL,
@@ -22,6 +37,7 @@ engine = create_engine(
     pool_pre_ping=True,
     pool_recycle=300
 )
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
@@ -32,3 +48,4 @@ def get_db():
         yield db
     finally:
         db.close()
+
