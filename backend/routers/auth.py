@@ -10,10 +10,16 @@ router = APIRouter(
 
 @router.post("/register", response_model=schemas.UserResponse)
 def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    try:
+        db_user = crud.get_user_by_email(db, email=user.email)
+        if db_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        return crud.create_user(db=db, user=user)
+    except Exception as e:
+        import traceback
+        error_msg = f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}"
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"detail": error_msg})
 
 @router.post("/login")
 def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
