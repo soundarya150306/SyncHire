@@ -1,12 +1,22 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "functions": {
-    "api/**/*.py": {
-      "includeFiles": "backend/**",
-      "runtime": "python@3.9"
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxDuration": 60
+      }
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
-  },
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
