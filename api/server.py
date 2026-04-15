@@ -2,7 +2,16 @@ import sys
 import os
 
 # Make the backend directory importable
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+backend_dir = os.path.join(parent_dir, 'backend')
+
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+# Also insert parent directory just in case
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 
 
 

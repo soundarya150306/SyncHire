@@ -1,6 +1,12 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "api/**/*.py": {
+      "includeFiles": "backend/**",
+      "runtime": "python@3.9"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/:path*",
