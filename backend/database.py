@@ -25,17 +25,24 @@ if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
 connect_args = {}
 if DATABASE_URL and DATABASE_URL.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
-elif DATABASE_URL and "postgresql" in DATABASE_URL:
-    # Ensure optimal connection settings for cloud databases
+elif DATABASE_URL and ("postgresql" in DATABASE_URL or "postgres" in DATABASE_URL):
+    # Ensure SSL is used for managed databases like Neon/Supabase
+    # Some providers require 'sslmode=require' in the URL, but we can also set it here
     connect_args = {
-        "sslmode": "prefer"
+        "sslmode": "require",
+        "connect_timeout": 10
     }
 
+# For serverless (Vercel), we want to avoid connection exhaustion.
+# We'll use a small pool size or null pool if needed, but 
+# SQLAlchemy's QueuePool with a small size is usually okay for low traffic.
 engine = create_engine(
     DATABASE_URL,
     connect_args=connect_args,
     pool_pre_ping=True,
-    pool_recycle=300
+    pool_recycle=300,
+    pool_size=5,
+    max_overflow=10
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
