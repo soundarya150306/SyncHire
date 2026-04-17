@@ -9,7 +9,7 @@ router = APIRouter(
     tags=["jobs"]
 )
 
-@router.post("/", response_model=schemas.JobResponse)
+@router.post("", response_model=schemas.JobResponse)
 def create_job(
     job: schemas.JobCreate,
     db: Session = Depends(database.get_db),

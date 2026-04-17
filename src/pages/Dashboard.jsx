@@ -51,7 +51,7 @@ const Dashboard = () => {
 
     const fetchJobs = async () => {
         try {
-            const response = await api.get('/jobs');
+            const response = await api.get('jobs');
             setJobs(response.data);
         } catch (error) {
             console.error("Error fetching jobs", error);
@@ -62,7 +62,7 @@ const Dashboard = () => {
 
     const fetchStats = async () => {
         try {
-            const response = await api.get('/dashboard/stats');
+            const response = await api.get('dashboard/stats');
             setStats(response.data);
         } catch (error) {
             console.error("Error fetching stats", error);
@@ -71,7 +71,7 @@ const Dashboard = () => {
 
     const fetchChartData = async () => {
         try {
-            const response = await api.get(`/dashboard/chart?days=${chartPeriod}`);
+            const response = await api.get(`dashboard/chart?days=${chartPeriod}`);
             setChartData(response.data);
         } catch (error) {
             console.error("Error fetching chart data", error);

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
-import { 
-    Search, Filter, Users, ChevronDown, CheckCircle, 
-    XCircle, Clock, FileText, Download, ExternalLink, Calendar, Settings 
+import {
+    Search, Filter, Users, ChevronDown, CheckCircle,
+    XCircle, Clock, FileText, Download, ExternalLink, Calendar, Settings
 } from 'lucide-react';
 
 const Candidates = () => {
@@ -25,7 +25,7 @@ const Candidates = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            
+
             // Fetch candidates
             try {
                 const candRes = await api.get('/candidates/');
@@ -53,7 +53,7 @@ const Candidates = () => {
         try {
             const res = await api.patch(`/candidates/${candidateId}/status`, { status: newStatus });
             if (res.status === 200) {
-                setCandidates(prev => 
+                setCandidates(prev =>
                     prev.map(c => c.id === candidateId ? { ...c, status: newStatus } : c)
                 );
             }
@@ -67,7 +67,7 @@ const Candidates = () => {
             const isoDate = new Date(dateStr).toISOString();
             const res = await api.patch(`/candidates/${candidateId}/interview_slot`, { interview_slot: isoDate });
             if (res.status === 200) {
-                setCandidates(prev => 
+                setCandidates(prev =>
                     prev.map(c => c.id === candidateId ? { ...c, interview_slot: isoDate, status: 'Interview' } : c)
                 );
             }
@@ -140,14 +140,14 @@ const Candidates = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 {/* Advanced Search & Filtering Toolbar */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto mt-4 md:mt-0 glass-panel p-2 z-20">
                     <div className="relative w-full sm:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                        <input 
-                            type="text" 
-                            placeholder="Search candidates or interviews..." 
+                        <input
+                            type="text"
+                            placeholder="Search candidates or interviews..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-secondary-500/50 focus:ring-1 focus:ring-secondary-500/50 transition-all font-sans"
@@ -156,7 +156,7 @@ const Candidates = () => {
                     <div className="w-px h-8 bg-white/10 hidden sm:block" />
                     <div className="flex items-center gap-2 w-full sm:w-auto px-2">
                         <Filter size={16} className="text-gray-400" />
-                        <select 
+                        <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
                             className="bg-transparent text-sm text-gray-300 border-none focus:ring-0 focus:outline-none cursor-pointer hover:text-white transition-colors"
@@ -178,13 +178,13 @@ const Candidates = () => {
                 </div>
             ) : filteredCandidates.length === 0 ? (
                 <div className="glass-panel py-20 flex flex-col items-center justify-center text-center">
-                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10 shadow-inner">
-                                <Users className="text-gray-500 w-8 h-8" />
-                            </div>
-                            <h3 className="text-lg font-bold text-white mb-2 tracking-tight">No Interviews or Candidates Found</h3>
-                            <p className="text-gray-500 max-w-sm mx-auto text-sm">
-                                Try adjusting your filters or search query.
-                            </p></div>
+                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10 shadow-inner">
+                        <Users className="text-gray-500 w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2 tracking-tight">No Interviews or Candidates Found</h3>
+                    <p className="text-gray-500 max-w-sm mx-auto text-sm">
+                        Try adjusting your filters or search query.
+                    </p></div>
             ) : (
                 <div className="glass-panel overflow-hidden border border-white/5 rounded-2xl">
                     <div className="overflow-x-auto">
@@ -202,7 +202,7 @@ const Candidates = () => {
                                 <AnimatePresence>
                                     {filteredCandidates.map((candidate) => (
                                         <React.Fragment key={candidate.id}>
-                                            <motion.tr 
+                                            <motion.tr
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0 }}
@@ -223,17 +223,17 @@ const Candidates = () => {
                                                                 <div className="text-xs text-gray-500">{candidate.email}</div>
                                                             </div>
                                                         </div>
-                                                        { candidate.interview_slot && (
+                                                        {candidate.interview_slot && (
                                                             <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-primary-300 bg-primary-500/10 border border-primary-500/20 px-2 py-1 rounded w-fit ml-14">
                                                                 <Calendar size={12} />
-                                                                {new Date(candidate.interview_slot).toLocaleString(undefined, { 
-                                                                    weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'
+                                                                {new Date(candidate.interview_slot).toLocaleString(undefined, {
+                                                                    weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                                                                 })}
                                                             </div>
                                                         )}
                                                     </div>
                                                 </td>
-                                                
+
                                                 {/* Date */}
                                                 <td className="px-6 py-5 text-sm text-gray-400 whitespace-nowrap">
                                                     {candidate.applied_at ? new Date(candidate.applied_at).toLocaleDateString(undefined, {
@@ -245,20 +245,18 @@ const Candidates = () => {
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-full max-w-[100px] h-2 bg-gray-800 rounded-full overflow-hidden">
-                                                            <motion.div 
+                                                            <motion.div
                                                                 initial={{ width: 0 }}
                                                                 animate={{ width: `${candidate.score}%` }}
                                                                 transition={{ duration: 1, delay: 0.2 }}
-                                                                className={`h-full rounded-full ${
-                                                                            candidate.score >= aiThreshold ? 'bg-emerald-500' :
-                                                                            candidate.score >= (aiThreshold - 20) ? 'bg-amber-500' : 'bg-red-500'
-                                                                }`}
+                                                                className={`h-full rounded-full ${candidate.score >= aiThreshold ? 'bg-emerald-500' :
+                                                                        candidate.score >= (aiThreshold - 20) ? 'bg-amber-500' : 'bg-red-500'
+                                                                    }`}
                                                             />
                                                         </div>
-                                                        <span className={`text-sm font-semibold font-mono ${
-                                                            candidate.score >= aiThreshold ? 'text-emerald-400' :
-                                                            candidate.score >= (aiThreshold - 20) ? 'text-amber-400' : 'text-red-400'
-                                                        }`}>
+                                                        <span className={`text-sm font-semibold font-mono ${candidate.score >= aiThreshold ? 'text-emerald-400' :
+                                                                candidate.score >= (aiThreshold - 20) ? 'text-amber-400' : 'text-red-400'
+                                                            }`}>
                                                             {Math.round(candidate.score)}%
                                                         </span>
                                                     </div>
@@ -267,7 +265,7 @@ const Candidates = () => {
                                                 {/* Status Dropdown */}
                                                 <td className="px-6 py-5" onClick={(e) => e.stopPropagation()}>
                                                     <div className="relative inline-block">
-                                                        <select 
+                                                        <select
                                                             value={candidate.status}
                                                             onChange={(e) => handleStatusChange(candidate.id, e.target.value)}
                                                             className={`appearance-none pl-8 pr-8 py-1.5 rounded-full text-xs font-semibold border focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background cursor-pointer transition-colors ${getStatusStyle(candidate.status)}`}
@@ -286,7 +284,7 @@ const Candidates = () => {
 
                                                 {/* Actions */}
                                                 <td className="px-6 py-5 text-right">
-                                                    <button 
+                                                    <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleDownloadResume(candidate.id, candidate.first_name, candidate.last_name);
@@ -302,7 +300,7 @@ const Candidates = () => {
                                             {/* Expandable Content (AI Analysis) */}
                                             <AnimatePresence>
                                                 {expandedId === candidate.id && (
-                                                    <motion.tr 
+                                                    <motion.tr
                                                         initial={{ opacity: 0, height: 0 }}
                                                         animate={{ opacity: 1, height: 'auto' }}
                                                         exit={{ opacity: 0, height: 0 }}
@@ -339,7 +337,7 @@ const Candidates = () => {
                                                                                             </div>
                                                                                         </div>
                                                                                     );
-                                                                                } catch(e) {
+                                                                                } catch (e) {
                                                                                     // fallback if not valid JSON
                                                                                     return <div dangerouslySetInnerHTML={{ __html: candidate.analysis_feedback.replace(/\n/g, '<br />') }} />;
                                                                                 }
@@ -356,36 +354,36 @@ const Candidates = () => {
                                                                             <span className="text-gray-500">Applied For Job</span>
                                                                             <span className="text-gray-200">{jobs?.find(j => j.id === candidate.job_id)?.title || `Job #${candidate.job_id}`}</span>
                                                                         </div>
-                                                                        
+
                                                                         {candidate.interview_slot && (
                                                                             <div className="flex justify-between text-sm py-2 border-b border-white/5">
                                                                                 <span className="text-gray-500">Confirmed Interview</span>
                                                                                 <span className="text-emerald-400 font-semibold">
-                                                                                    {new Date(candidate.interview_slot).toLocaleString(undefined, { 
-                                                                                        weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'
+                                                                                    {new Date(candidate.interview_slot).toLocaleString(undefined, {
+                                                                                        weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                                                                                     })}
                                                                                 </span>
                                                                             </div>
                                                                         )}
-                                                                        
+
                                                                         {candidate.status === 'Interview' && (
                                                                             <div className="flex flex-col gap-2 py-3 border-b border-white/5">
                                                                                 <span className="text-gray-500 text-xs uppercase font-bold tracking-wider">
                                                                                     {candidate.interview_slot ? 'Reschedule Interview Slot' : 'Confirm Interview Slot'}
                                                                                 </span>
-                                                                                <input 
-                                                                                    type="datetime-local" 
+                                                                                <input
+                                                                                    type="datetime-local"
                                                                                     title="Schedule slot"
-                                                                                    defaultValue={candidate.interview_slot ? new Date(new Date(candidate.interview_slot).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16) : ""}
+                                                                                    defaultValue={candidate.interview_slot ? new Date(new Date(candidate.interview_slot).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ""}
                                                                                     className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary-500/50"
                                                                                     onChange={(e) => {
-                                                                                        if(e.target.value) handleScheduleSlot(candidate.id, e.target.value);
+                                                                                        if (e.target.value) handleScheduleSlot(candidate.id, e.target.value);
                                                                                     }}
                                                                                 />
                                                                             </div>
                                                                         )}
                                                                         <div className="pt-2">
-                                                                            <button 
+                                                                            <button
                                                                                 onClick={() => handleDownloadResume(candidate.id, candidate.first_name, candidate.last_name)}
                                                                                 className="flex items-center justify-center gap-2 w-full py-2 bg-white/5 hover:bg-white/10 text-primary-300 text-sm font-medium rounded-lg transition-colors"
                                                                             >

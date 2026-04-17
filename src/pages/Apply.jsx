@@ -24,7 +24,7 @@ const Apply = () => {
                 // Fetch public jobs and find the specific one. 
                 // Since we don't have a specific public job detail endpoint without auth,
                 // we'll filter from the public list.
-                const response = await api.get('/jobs/public');
+                const response = await api.get('jobs/public');
                 const selectedJob = response.data.find(j => j.id === parseInt(jobId));
                 setJob(selectedJob);
             } catch (error) {
@@ -57,7 +57,7 @@ const Apply = () => {
         try {
              // The /candidates/apply endpoint does not explicitly require current_user 
              // in its function signature, so it should be publicly accessible.
-            await api.post('/candidates/apply', formData, {
+            await api.post('candidates/apply', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             setSuccess(true);

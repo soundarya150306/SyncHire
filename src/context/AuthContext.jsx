@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         if (token) {
             // Verify token by fetching user profile
-            api.get('/auth/me')
+            api.get('auth/me')
                 .then(response => {
                     const { id, email, full_name, role } = response.data;
                     setUser({ token, id, email, full_name, role });
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await api.post('/auth/login', { email, password });
+            const response = await api.post('auth/login', { email, password });
             const { access_token, role, user_id, full_name } = response.data;
 
             localStorage.setItem('token', access_token);
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (email, password, fullName) => {
         try {
-            await api.post('/auth/register', { email, password, full_name: fullName });
+            await api.post('auth/register', { email, password, full_name: fullName });
             return true;
         } catch (error) {
             console.error("Registration failed", error);

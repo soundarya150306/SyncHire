@@ -16,7 +16,7 @@ const Careers = () => {
             try {
                 // Determine if we need to call a public endpoint. 
                 // Currently, our backend /jobs/public returns this list.
-                const endpoint = recruiterId ? `/jobs/public?recruiter_id=${recruiterId}` : '/jobs/public';
+                const endpoint = recruiterId ? `jobs/public?recruiter_id=${recruiterId}` : 'jobs/public';
                 const response = await api.get(endpoint);
                 setJobs(response.data);
             } catch (error) {

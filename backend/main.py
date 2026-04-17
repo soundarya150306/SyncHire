@@ -46,13 +46,5 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    try:
-        from database import SessionLocal
-        from sqlalchemy import text
-        db = SessionLocal()
-        db.execute(text("SELECT 1"))
-        return {"status": "ok", "version": "1.0.1", "db": "connected"}
-    except Exception as e:
-        import traceback
-        return {"status": "error", "error": str(e), "trace": traceback.format_exc()}
+    return {"status": "ok", "version": "1.0.1"}
 

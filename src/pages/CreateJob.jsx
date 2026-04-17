@@ -16,7 +16,7 @@ const CreateJob = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await api.post('/jobs/', { title, description, requirements });
+            await api.post('jobs', { title, description, requirements });
             navigate('/dashboard');
         } catch (error) {
             console.error("Failed to create job", error);

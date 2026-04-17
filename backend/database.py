@@ -13,9 +13,15 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 IS_VERCEL = os.getenv("VERCEL") == "1"
 
 if not DATABASE_URL:
-    # Strictly for local development only
-    DATABASE_URL = "sqlite:///./cv_screening.db"
-    print("WARNING: Using SQLite. Data will not persist on Vercel.")
+    if IS_VERCEL:
+        # Use /tmp on Vercel because the root directory is read-only
+        DATABASE_URL = "sqlite:////tmp/cv_screening.db"
+        print("CRITICAL WARNING: No DATABASE_URL provided. Using transient SQLite in /tmp.")
+        print("Data WILL NOT persist between requests or deployments.")
+    else:
+        # Local development
+        DATABASE_URL = "sqlite:///./cv_screening.db"
+        print("WARNING: Using local SQLite database.")
 
 # If using PostgreSQL via SQLAlchemy 2.0+, 'postgres://' must be 'postgresql://'
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):

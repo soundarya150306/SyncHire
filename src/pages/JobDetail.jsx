@@ -43,8 +43,8 @@ const JobDetail = () => {
     const fetchJobAndCandidates = async () => {
         try {
             const [jobRes, candidatesRes] = await Promise.all([
-                api.get(`/jobs/${id}`),
-                api.get(`/candidates/${id}`)
+                api.get(`jobs/${id}`),
+                api.get(`candidates/${id}`)
             ]);
             setJob(jobRes.data);
             const sorted = candidatesRes.data.sort((a, b) => b.score - a.score);
@@ -74,7 +74,7 @@ const JobDetail = () => {
         formData.append('resume', file);
 
         try {
-            await api.post('/candidates/apply', formData, {
+            await api.post('candidates/apply', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             fetchJobAndCandidates();
@@ -94,7 +94,7 @@ const JobDetail = () => {
     const handleStatusChange = async (candidateId, newStatus) => {
         setStatusUpdating(true);
         try {
-            const res = await api.patch(`/candidates/${candidateId}/status`, { status: newStatus });
+            const res = await api.patch(`candidates/${candidateId}/status`, { status: newStatus });
             setCandidates(prev =>
                 prev.map(c => c.id === candidateId ? { ...c, status: res.data.status } : c)
             );
@@ -112,7 +112,7 @@ const JobDetail = () => {
     const handleCloseJob = async () => {
         if (!window.confirm('Are you sure you want to delete this job and all its candidates?')) return;
         try {
-            await api.delete(`/jobs/${id}`);
+            await api.delete(`jobs/${id}`);
             navigate('/dashboard');
         } catch (error) {
             console.error("Failed to delete job", error);
@@ -122,7 +122,7 @@ const JobDetail = () => {
 
     const handleDownloadResume = async (candidateId) => {
         try {
-            const response = await api.get(`/candidates/${candidateId}/resume`, {
+            const response = await api.get(`candidates/${candidateId}/resume`, {
                 responseType: 'blob'
             });
             const url = window.URL.createObjectURL(new Blob([response.data]));
