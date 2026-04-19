@@ -23,8 +23,10 @@ def calculate_match_score(resume_text: str, job_text: str) -> Tuple[float, str]:
     if not GEMINI_API_KEY:
         return 0.0, '{"matched_skills": [], "missing_skills": [], "summary": "Gemini API key is not configured."}'
 
-    # Initialize model
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    # Initialize model - using 1.5-flash as it is more widely available in stable tiers
+    # if 2.5-flash is desired, it can be passed via env var
+    model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    model = genai.GenerativeModel(model_name)
 
     prompt = f"""
     You are an expert technical recruiter analyzing a resume against a job description.
@@ -47,21 +49,30 @@ def calculate_match_score(resume_text: str, job_text: str) -> Tuple[float, str]:
     IMPORTANT: Analyze carefully whether the person is suitable for the job. Do not invent details. Return ONLY valid JSON, without any markdown formatting blocks.
     """
 
-    response = model.generate_content(prompt)
-    resp_text = response.text.strip()
-    
-    # Clean markdown code blocks if the model includes them
-    if resp_text.startswith("```json"):
-        resp_text = resp_text[7:-3].strip()
-    elif resp_text.startswith("```"):
-        resp_text = resp_text[3:-3].strip()
+    try:
+        response = model.generate_content(prompt)
+        resp_text = response.text.strip()
         
-    result = json.loads(resp_text)
-    
-    score_val = float(result.get("score", 0.0))
-    feedback = {
-        "matched_skills": result.get("matched_skills", []),
-        "missing_skills": result.get("missing_skills", []),
-        "summary": result.get("summary", "No summary provided by API.")
-    }
-    return score_val, json.dumps(feedback)
+        # Clean markdown code blocks if the model includes them
+        if resp_text.startswith("```json"):
+            resp_text = resp_text[7:-3].strip()
+        elif resp_text.startswith("```"):
+            resp_text = resp_text[3:-3].strip()
+            
+        result = json.loads(resp_text)
+        
+        score_val = float(result.get("score", 0.0))
+        feedback = {
+            "matched_skills": result.get("matched_skills", []),
+            "missing_skills": result.get("missing_skills", []),
+            "summary": result.get("summary", "No summary provided by AI.")
+        }
+        return score_val, json.dumps(feedback)
+    except Exception as e:
+        error_msg = f"Gemini API Error: {str(e)}"
+        print(f"CRITICAL ERROR in matcher: {error_msg}")
+        return 0.0, json.dumps({
+            "matched_skills": [],
+            "missing_skills": [],
+            "summary": f"AI analysis failed: {error_msg}. Please check API key permissions and quota."
+        })

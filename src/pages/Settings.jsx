@@ -15,7 +15,7 @@ const Settings = () => {
         return localStorage.getItem('notifications') !== 'false';
     });
     const [saved, setSaved] = useState(false);
-    
+
     // Security State
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -95,8 +95,8 @@ const Settings = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab.id
-                                    ? 'bg-primary-500/10 text-primary-400 border border-primary-500/20 font-medium'
-                                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                ? 'bg-primary-500/10 text-primary-400 border border-primary-500/20 font-medium'
+                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
                                 }`}
                         >
                             <tab.icon size={18} /> {tab.label}
@@ -221,39 +221,38 @@ const Settings = () => {
                                 </div>
                                 <div>
                                     <label className="label">Change Password</label>
-                                    <input 
-                                        type="password" 
-                                        className="input mb-3" 
-                                        placeholder="Current password" 
+                                    <input
+                                        type="password"
+                                        className="input mb-3"
+                                        placeholder="Current password"
                                         value={currentPassword}
                                         onChange={(e) => setCurrentPassword(e.target.value)}
                                     />
-                                    <input 
-                                        type="password" 
-                                        className="input mb-3" 
-                                        placeholder="New password" 
+                                    <input
+                                        type="password"
+                                        className="input mb-3"
+                                        placeholder="New password"
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                     />
-                                    <input 
-                                        type="password" 
-                                        className="input" 
-                                        placeholder="Confirm new password" 
+                                    <input
+                                        type="password"
+                                        className="input"
+                                        placeholder="Confirm new password"
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                     />
-                                    
+
                                     {securityMsg.text && (
-                                        <div className={`mt-3 text-sm py-2 px-3 rounded-lg border ${
-                                            securityMsg.type === 'error' 
-                                                ? 'bg-red-500/10 text-red-400 border-red-500/20' 
+                                        <div className={`mt-3 text-sm py-2 px-3 rounded-lg border ${securityMsg.type === 'error'
+                                                ? 'bg-red-500/10 text-red-400 border-red-500/20'
                                                 : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                        }`}>
+                                            }`}>
                                             {securityMsg.text}
                                         </div>
                                     )}
 
-                                    <button 
+                                    <button
                                         className="btn btn-ghost border border-white/10 mt-4 text-sm"
                                         onClick={handlePasswordChange}
                                         disabled={changingPassword}

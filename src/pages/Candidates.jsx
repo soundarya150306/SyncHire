@@ -79,7 +79,7 @@ const Candidates = () => {
     const handleDownloadResume = async (candidateId, firstName, lastName) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:8000/candidates/${candidateId}/resume`, {
+            const res = await fetch(`/api/candidates/${candidateId}/resume`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
