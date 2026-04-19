@@ -23,9 +23,9 @@ def calculate_match_score(resume_text: str, job_text: str) -> Tuple[float, str]:
     if not GEMINI_API_KEY:
         return 0.0, '{"matched_skills": [], "missing_skills": [], "summary": "Gemini API key is not configured."}'
 
-    # Initialize model - using 1.5-flash as it is more widely available in stable tiers
-    # if 2.5-flash is desired, it can be passed via env var
-    model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    # Initialize model
+    # Use the current selected model 'gemini-3.1-pro' as default
+    model_name = os.getenv("GEMINI_MODEL", "gemini-3.1-pro")
     model = genai.GenerativeModel(model_name)
 
     prompt = f"""
