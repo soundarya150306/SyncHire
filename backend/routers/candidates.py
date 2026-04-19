@@ -97,7 +97,7 @@ def apply_for_job(
 
 
 
-@router.get("/", response_model=List[schemas.CandidateResponse])
+@router.get("", response_model=List[schemas.CandidateResponse])
 def get_all_candidates(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(get_current_user)

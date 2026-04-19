@@ -21,7 +21,7 @@ def create_job(
 def read_public_jobs(recruiter_id: int = None, skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
     return crud.get_public_jobs(db, recruiter_id=recruiter_id, skip=skip, limit=limit)
 
-@router.get("/", response_model=List[schemas.JobResponse])
+@router.get("", response_model=List[schemas.JobResponse])
 def read_jobs(
     skip: int = 0,
     limit: int = 100,

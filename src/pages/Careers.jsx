@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Briefcase, MapPin, Calendar, Clock, ChevronRight } from 'lucide-react';
+import { Briefcase, MapPin, Calendar, Clock, ChevronRight, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
 
@@ -38,6 +38,11 @@ const Careers = () => {
         <div className="min-h-screen bg-bg-base text-gray-300 font-sans selection:bg-primary-500/30">
             {/* Header / Hero Section */}
             <div className="relative overflow-hidden bg-surface py-20 border-b border-white/5">
+                <div className="absolute top-6 left-6 z-20">
+                    <Link to="/dashboard" className="btn btn-ghost bg-white/5 hover:bg-white/10 border border-white/10 shadow-lg backdrop-blur-md rounded-xl text-sm font-medium gap-2 text-gray-300 hover:text-white transition-all">
+                        <ArrowLeft size={16} /> Return to Dashboard
+                    </Link>
+                </div>
                 <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:32px_32px]" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-500/10 rounded-full blur-[100px] pointer-events-none" />
                 

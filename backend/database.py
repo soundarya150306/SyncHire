@@ -7,7 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Use Postgres/remote DB if provided, else fallback to local SQLite
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Vercel's native Postgres integration uses POSTGRES_URL
+DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
 
 # Check if we are running on Vercel or locally
 IS_VERCEL = os.getenv("VERCEL") == "1"
