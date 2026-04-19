@@ -153,6 +153,8 @@ const JobDetail = () => {
         </div>
     );
 
+    const activeCandidates = candidates.filter(c => c.status !== 'Rejected');
+
     return (
         <div className="max-w-7xl mx-auto space-y-8">
             {/* Header */}
@@ -170,7 +172,7 @@ const JobDetail = () => {
                                     <Calendar size={14} /> Posted {job ? new Date(job.created_at).toLocaleDateString() : ''}
                                 </span>
                                 <span className="flex items-center gap-1">
-                                    <User size={14} /> {candidates.length} Applicant{candidates.length !== 1 ? 's' : ''}
+                                    <User size={14} /> {activeCandidates.length} Active Applicant{activeCandidates.length !== 1 ? 's' : ''}
                                 </span>
                             </div>
                             {job?.description && (
@@ -196,18 +198,18 @@ const JobDetail = () => {
                         </div>
                     </div>
 
-                    {candidates.length === 0 ? (
+                    {activeCandidates.length === 0 ? (
                         <div className="glass-panel p-12 text-center border-dashed border-white/10">
                             <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <User className="text-gray-500" size={32} />
                             </div>
-                            <h3 className="text-lg font-medium text-white">No candidates yet</h3>
+                            <h3 className="text-lg font-medium text-white">No active candidates yet</h3>
                             <p className="mt-1 text-gray-500">Upload resumes to start the screening process.</p>
                         </div>
                     ) : (
                         <div className="space-y-4">
                             <AnimatePresence>
-                                {candidates.map((candidate, index) => (
+                                {activeCandidates.map((candidate, index) => (
                                     <motion.div
                                         key={candidate.id}
                                         initial={{ opacity: 0, x: -20 }}
