@@ -121,7 +121,8 @@ const Candidates = () => {
 
     const filteredCandidates = candidates.filter(c => {
         const matchesSearch = `${c.first_name} ${c.last_name} ${c.email} ${c.status}`.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesStatus = filterStatus === 'All' || c.status === filterStatus;
+        // Hide Rejected by default when viewing 'All' active candidates, unless explicitly filtered
+        const matchesStatus = filterStatus === 'All' ? c.status !== 'Rejected' : c.status === filterStatus;
         return matchesSearch && matchesStatus;
     });
 
@@ -161,7 +162,7 @@ const Candidates = () => {
                             onChange={(e) => setFilterStatus(e.target.value)}
                             className="bg-transparent text-sm text-gray-300 border-none focus:ring-0 focus:outline-none cursor-pointer hover:text-white transition-colors"
                         >
-                            <option value="All" className="bg-gray-900">All Statuses</option>
+                            <option value="All" className="bg-gray-900">Active Candidates</option>
                             <option value="Applied" className="bg-gray-900">Applied</option>
                             <option value="Interview" className="bg-gray-900">Interview</option>
                             <option value="Hired" className="bg-gray-900">Hired</option>
