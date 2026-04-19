@@ -23,10 +23,50 @@ def calculate_match_score(resume_text: str, job_text: str) -> Tuple[float, str]:
     if not GEMINI_API_KEY:
         return 0.0, '{"matched_skills": [], "missing_skills": [], "summary": "Gemini API key is not configured."}'
 
-    # Initialize model
-    # Use the current selected model 'gemini-3.1-pro' as default
-    model_name = os.getenv("GEMINI_MODEL", "gemini-3.1-pro")
-    model = genai.GenerativeModel(model_name)
+    # Dynamically find a valid available model instead of hardcoding one
+    # This prevents 404 errors if a specific model version is deprecated or unavailable
+    try:
+        available_models = []
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                available_models.append(m.name)
+        
+        # Determine preferred models
+        preferred_model = os.getenv("GEMINI_MODEL", "")
+        if preferred_model and not preferred_model.startswith("models/"):
+            preferred_model = f"models/{preferred_model}"
+            
+        # Target fallbacks
+        fallback_models = [
+            "models/gemini-2.5-flash",
+            "models/gemini-2.0-flash",
+            "models/gemini-1.5-flash",
+            "models/gemini-3.1-pro"
+        ]
+        
+        selected_model_name = None
+        if preferred_model in available_models:
+            selected_model_name = preferred_model
+        else:
+            for fallback in fallback_models:
+                if fallback in available_models:
+                    selected_model_name = fallback
+                    break
+            
+            # If all else fails, grab the first one that has "flash" or just the first available
+            if not selected_model_name and available_models:
+                flash_models = [m for m in available_models if 'flash' in m]
+                selected_model_name = flash_models[0] if flash_models else available_models[0]
+                
+        if not selected_model_name:
+            raise Exception("No Content Generation models were found for your API key.")
+            
+        # Remove 'models/' prefix for the GenerativeModel class init if needed
+        clean_model_name = selected_model_name.replace("models/", "")
+        model = genai.GenerativeModel(clean_model_name)
+    except Exception as list_err:
+        print(f"Failed to list or select models: {list_err}. Falling back to basic 1.5-flash.")
+        model = genai.GenerativeModel("gemini-1.5-flash")
 
     prompt = f"""
     You are an expert technical recruiter analyzing a resume against a job description.

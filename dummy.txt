@@ -1,0 +1,3 @@
+John Doe
+john.doe@example.com
+Experienced Software Engineer with 5 years of Python and React experience. Built scalable web applications. Strong team player.
