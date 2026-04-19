@@ -53,6 +53,18 @@ def read_job(
         candidate_count=candidate_count
     )
 
+@router.get("/debug/models")
+def debug_models():
+    import google.generativeai as genai
+    import os
+    try:
+        models = []
+        for m in genai.list_models():
+            models.append({"name": m.name, "methods": m.supported_generation_methods})
+        return {"success": True, "models": models, "env_model": os.getenv("GEMINI_MODEL", "")}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
 @router.delete("/{job_id}")
 def delete_job(
     job_id: int,
