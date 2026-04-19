@@ -93,12 +93,12 @@ def update_candidate_slot(db: Session, candidate_id: int, slot_time: str):
 
 def get_total_candidates_count(db: Session, user_id: int = None):
     if user_id:
-        # Use query directly, in_() can accept a Query or select object
         job_ids = db.query(models.Job.id).filter(models.Job.owner_id == user_id)
         return db.query(func.count(models.Candidate.id)).filter(
-            models.Candidate.job_id.in_(job_ids)
+            models.Candidate.job_id.in_(job_ids),
+            models.Candidate.status != "Rejected"
         ).scalar()
-    return db.query(func.count(models.Candidate.id)).scalar()
+    return db.query(func.count(models.Candidate.id)).filter(models.Candidate.status != "Rejected").scalar()
 
 def get_interviews_count(db: Session, user_id: int = None):
     if user_id:

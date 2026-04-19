@@ -48,9 +48,10 @@ def get_chart_data(
             data.append(schemas.ChartDataPoint(name=target_day.strftime("%a"), applications=0))
         return data
 
-    # Fetch all relevant candidates' application dates in one go
+    # Fetch all relevant active candidates' application dates in one go
     candidate_dates = db.query(models.Candidate.applied_at).filter(
-        models.Candidate.job_id.in_(job_ids)
+        models.Candidate.job_id.in_(job_ids),
+        models.Candidate.status != "Rejected"
     ).all()
     
     # Extract dates from tuples
