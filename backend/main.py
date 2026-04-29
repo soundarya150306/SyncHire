@@ -14,7 +14,7 @@ import os
 
 cors_origins = os.getenv(
     "CORS_ORIGINS",
-    "http://localhost:5173,http://127.0.0.1:5173,https://sync-hire-green.vercel.app,https://synchire-ai-screener.vercel.app"
+    "http://localhost:5173,http://127.0.0.1:5173,https://synchire-ai-screener.vercel.app"
 ).split(",")
 
 

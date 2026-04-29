@@ -14,7 +14,7 @@
 
 **Backend (Server)**
 - **Framework:** FastAPI (Python 3.8+)
-- **Server:** Uvicorn
+- **Server:** Uvicorn (local) / Vercel Serverless (production)
 - **Authentication:** JWT-based stateless authentication (`python-jose`), Passwords hashed via `passlib[bcrypt]`
 - **Database ORM:** SQLAlchemy
 - **AI Integration:** Google Gemini API (Model: `gemini-2.5-flash`)
@@ -27,12 +27,10 @@
 
 ## 2. Database & Storage
 
-- **Database Engine:** SQLite
-- **Persistence:** Configured for cloud persistence using Render Persistent Disks.
-- **File Locations (Production):** 
-  - Database: `/data/cv_screening.db`
-  - Resume Uploads: `/data/uploads/`
-- **Local File Location:** `backend/cv_screening.db`
+- **Database Engine:** PostgreSQL (Production) / SQLite (Local/Fallback)
+- **Persistence:** Configured for cloud persistence using PostgreSQL (e.g., Vercel Postgres, Neon) ensuring authentication state and candidate data persists reliably across serverless instances.
+- **Connection Management:** Connection pooling tailored for serverless environments to prevent connection exhaustion.
+- **Storage Strategy:** Uses remote DB for structured data. File attachments (resumes) in production are handled ephemerally during AI processing due to the read-only file system on serverless architectures.
 
 **Data Tables:**
 - `users`: Stores emails, hashed passwords, and roles (Recruiter/Standard).
@@ -43,7 +41,7 @@
 
 ## 3. Intelligent Resume Analysis (Gemini AI)
 
-The core engine (`backend/matcher.py`) has been upgraded from simple keyword matching to high-performance AI analysis using **Google Gemini 1.5/2.x Flash**.
+The core engine (`backend/matcher.py`) uses **Google Gemini 1.5/2.x Flash** for high-performance AI analysis.
 
 **How it works:**
 1. **Extraction:** The system extracts raw text from PDF/Word documents.
@@ -59,17 +57,16 @@ The core engine (`backend/matcher.py`) has been upgraded from simple keyword mat
 ## 4. Key Highlights & Features
 
 - **Advanced AI Matching:** Leverages Large Language Models to provide "human-like" screening, understanding context beyond simple word counts.
+- **Recruiter-Focused UI:** The "Candidates" section is styled and integrated as "Interview Schedules", focusing workflow on active pipeline management. Candidates rejected by AI screening are automatically hidden to keep dashboards clean.
 - **Modern Pro Analytics:** Integrated dashboard with visual data representations for application trends over time.
-- **Enterprise-Ready Deployment:** Docker-compatible configuration (Render) with persistent localized storage for high-security environments.
 - **Clean UI/UX:** A premium recruiter experience built with modern design principles, including glassmorphism and subtle animations.
-- **Extensible Architecture:** Decoupled router-based FastAPI structure allows for easy scaling of features like automated emailing or interview scheduling.
+- **Serverless Architecture:** Re-architected API endpoints using a standardized `/api` prefix, seamlessly linking the React frontend with the FastAPI backend without 404 errors.
 
 ---
 
 ## 5. Deployment Information
 
-- **Hosting Platform:** Render
-- **Frontend:** Deployed as a Static Site (SyncHire-frontend)
-- **Backend:** Deployed as a Web Service (SyncHire-backend)
-- **Storage:** Attaches a 1GB Persistent Disk to the backend to ensure data persists across redeployments.
-
+- **Hosting Platform:** Vercel
+- **Frontend Deployment:** Deployed as a single-page application using `@vercel/static-build`.
+- **Backend Deployment:** Deployed via Vercel Serverless Functions (`@vercel/python` routing through `api/index.py`).
+- **Routing Rules:** Custom `vercel.json` rewrite configurations map `/api/*` to the FastAPI backend, while routing client-side requests back to `index.html`.
